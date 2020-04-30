@@ -1,0 +1,27 @@
+{
+  "apps": [
+    {
+      "name": "iMock",
+      "script": "./app.js",
+      "watch": false,
+      "log_date_format": "YYYY-MM-DD HH:mm:ss.SSS",
+      "date_format": "YYYY-MM-DD HH:mm:ss.SSS",
+      "out_file": "../var/logs/out.log",
+      "error_file": "../var/logs/error.log",
+      "merge_logs": true,
+      "instances": 4,
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_sit": {
+        "NODE_ENV": "test"
+      },
+      "env_pre": {
+        "NODE_ENV": "prepare"
+      },
+      "env_product": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

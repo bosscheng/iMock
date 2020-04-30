@@ -1,0 +1,700 @@
+<% locals.leftItem = 'mock' %>
+<% include header %>
+
+<section class="box span12 mock mock-show">
+    <div class="box-header">
+        <h2>接口详情</h2>
+    </div>
+    <div class="box-content form-horizontal">
+        <div class="control-group">
+            <label for="" class="control-label">method :</label>
+            <div class="controls">
+                <span><%= mock.method %></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="" class="control-label">分类 :</label>
+            <div class="controls">
+                <span><%= mock.prefix %></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="" class="control-label">URL :</label>
+            <div class="controls">
+                <% if(mock.prefix){ %>
+                <span>http://fetools.cnsuning.com/api/<%= mock.prefix %>/<%= mock.url %></span>
+                <% }else{ %>
+                <span>http://fetools.cnsuning.com/api/<%= mock.url %></span>
+                <% } %>
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="" class="control-label">类型 :</label>
+            <div class="controls">
+                <span><%= mock.type %></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="" class="control-label">描述 :</label>
+            <div class="controls">
+                <span><%= mock.description %></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="" class="control-label">接口入参 :</label>
+            <div class="controls">
+                <div class="span8">
+                    <table class="table table-bordered ">
+                        <colgroup>
+                            <col width="20%">
+                            <col width="15%">
+                            <col width="15%">
+                            <col width="50%">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>是否必填</th>
+                            <th>类型</th>
+                            <th>说明</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        <% mock.requires && mock.requires.forEach(function(item, i){ %>
+                        <tr>
+                            <td><%= item.name %></td>
+                            <td>
+                                <% if(item.isNeed === 'true' || item.isNeed === true){ %>
+                                <span style="color: red">必填</span>
+                                <% }else{ %>
+                                <span>非必填</span>
+                                <% } %>
+                            </td>
+                            <td><%= item.type %></td>
+                            <td><%= item.desc %></td>
+                        </tr>
+                        <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <div class="control-group">
+            <label for="" class="control-label">接口返回数据 :</label>
+            <div class="controls">
+                <div class="span8">
+                    <pre id="responseDiv">
+
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label for="" class="control-label">其他信息：</label>
+            <div class="controls info-msg">
+                <div>
+                    <span class="c1">创建时间：</span>
+                    <span class="label"><%= locals.moment(mock.createdAt).format('YYYY-MM-DD HH:mm') %></span>
+                </div>
+                <br>
+                <div>
+                    <span class="c1">修改时间：</span>
+                    <span class="label"><%= locals.moment(mock.updatedAt).format('YYYY-MM-DD HH:mm') %></span>
+                    <% if(mock.createdAt !== mock.updatedAt){ %>
+                    <a href="javascript:;" data-id="<%= mock._id %>" class="link text-warning" id="showMockDialog"
+                       style="margin-left: 16px;">流水表</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <a href="/mock" class="btn btn-primary">返回</a>
+
+                <% if(locals.user){ %>
+                <a href="/mock/edit/<%= mock._id %>" class="btn btn-danger">修改</a>
+                <% } %>
+                <a href="javascript:;" data-type="<%= mock.type %>" data-prefix="<%= mock.prefix %>"
+                   data-url="<%= mock.url %>" id="preview"
+                   class="btn btn-warning">预览</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal hide fade" id="showMockHistory">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">流水表</h3>
+    </div>
+    <div class="modal-body">
+        <p class="p-title"><span>修改人</span>| <span>修改时间</span></p>
+        <div class="p-list">
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
+    </div>
+</div>
+
+
+<div class="modal hide fade mock-show" id="showMockHistoryCompare">
+    <div class="modal-header">
+        <h3 id="myModalLabel">
+            <span class="text-error" style="float: left;">
+               <%= mock.updatedByZh %>(<%= mock.updatedBy %>)(<%= locals.moment(mock.updatedAt).format('YYYY-MM-DD HH:mm')%>)
+                <span class="label label-important">最新版本</span>
+            </span>
+            比较
+            <span class="text-error current-version" style="float: right">xxx</span>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div class="modal-content left-content">
+            <div class="box-content form-horizontal">
+                <div class="control-group">
+                    <label for="" class="control-label">method :</label>
+                    <div class="controls">
+                        <span class="left-method"><%= mock.method %></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">分类 :</label>
+                    <div class="controls">
+                        <span class="left-prefix"><%= mock.prefix %></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">URL :</label>
+                    <div class="controls">
+                        <% if(mock.prefix){ %>
+                        <span class="left-url">/api/<%= mock.prefix %>/<%= mock.url %></span>
+                        <% }else{ %>
+                        <span class="left-url">/api/<%= mock.url %></span>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">类型 :</label>
+                    <div class="controls">
+                        <span class="left-type"><%= mock.type %></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">描述 :</label>
+                    <div class="controls">
+                        <span class="left-desc"><%= mock.description %></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">接口入参 :</label>
+                    <div class="controls">
+                        <div class="span12">
+                            <table class="table table-bordered left-table">
+                                <colgroup>
+                                    <col width="20%">
+                                    <col width="15%">
+                                    <col width="15%">
+                                    <col width="50%">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>名称</th>
+                                    <th>是否必填</th>
+                                    <th>类型</th>
+                                    <th>说明</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                <% mock.requires && mock.requires.forEach(function(item, i){ %>
+                                <tr>
+                                    <td><%= item.name %></td>
+                                    <td>
+                                        <% if(item.isNeed === 'true' || item.isNeed === true){ %>
+                                        <span>必填</span>
+                                        <% }else{ %>
+                                        <span>非必填</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= item.type %></td>
+                                    <td><%= item.desc %></td>
+                                </tr>
+                                <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">接口返回数据 :</label>
+                    <div class="controls">
+                        <div class="span8">
+                        <pre id="responseModalDivLeft">
+
+                        </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-content right-content">
+            <div class="box-content form-horizontal">
+                <div class="control-group">
+                    <label for="" class="control-label">method :</label>
+                    <div class="controls">
+                        <span class="right-method"></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">分类 :</label>
+                    <div class="controls">
+                        <span class="right-prefix"></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">URL :</label>
+                    <div class="controls">
+                        <span class="right-url"></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">类型 :</label>
+                    <div class="controls">
+                        <span class="right-type"></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">描述 :</label>
+                    <div class="controls">
+                        <span class="right-desc"></span>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">接口入参 :</label>
+                    <div class="controls">
+                        <div class="span12">
+                            <table class="table table-bordered right-table">
+                                <colgroup>
+                                    <col width="20%">
+                                    <col width="15%">
+                                    <col width="15%">
+                                    <col width="50%">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>名称</th>
+                                    <th>是否必填</th>
+                                    <th>类型</th>
+                                    <th>说明</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label for="" class="control-label">接口返回数据 :</label>
+                    <div class="controls">
+                        <div class="span8">
+                        <pre id="responseModalDivRight">
+
+                        </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary btn-back">返回流水表</button>
+        <button data-dismiss="modal" aria-hidden="true" class="btn btn-danger">关闭</button>
+    </div>
+</div>
+
+
+<textarea style="display: none" id="responseData"><%= mock.response %></textarea>
+<input type="hidden" value="<%= mock.requiresStr %>" id="requiresData">
+<script>
+    //
+    $(function () {
+        // 格式化 Json 效果
+        function _formatJson(string) {
+
+            string = _removeWhiteSpace(string);
+
+            function _span(len) {
+                var t = [], i;
+                for (i = 0; i < len; i++) {
+                    t.push(' ');
+                }
+                return t.join('');
+            }
+
+            var text = string.split("\n").join(" ");
+            var t = [];
+            var tab = 0;
+            var inString = false;
+            for (var i = 0, len = text.length; i < len; i++) {
+                var c = text.charAt(i);
+                if (inString && c === inString) {
+                    if (text.charAt(i - 1) !== '\\') {
+                        inString = false;
+                    }
+                } else if (!inString && (c === '"' || c === "'")) {
+                    inString = c;
+                } else if (!inString && (c === ' ' || c === "\t")) {
+                    c = '';
+                } else if (!inString && c === ':') {
+                    c += ' ';
+                } else if (!inString && c === ',') {
+                    c += "\n" + _span(tab * 2);
+                } else if (!inString && (c === '[' || c === '{')) {
+                    tab++;
+                    c += "\n" + _span(tab * 2);
+                } else if (!inString && (c === ']' || c === '}')) {
+                    tab--;
+                    c = "\n" + _span(tab * 2) + c;
+                }
+                t.push(c);
+            }
+            return t.join('');
+        }
+
+        function _removeWhiteSpace(string) {
+            var text = string.replace(/\s/ig, '');
+            var t = [];
+            var inString = false;
+            for (var i = 0, len = text.length; i < len; i++) {
+                var c = text.charAt(i);
+                if (inString && c === inString) {
+                    if (text.charAt(i - 1) !== '\\') {
+                        inString = false;
+                    }
+                } else if (!inString && (c === '"' || c === "'")) {
+                    inString = c;
+                } else if (!inString && (c === ' ' || c === "\t")) {
+                    c = '';
+                }
+                t.push(c);
+            }
+            return t.join('');
+        }
+
+        function _syntaxHighlight(json) {
+            if (typeof json != 'string') {
+                json = JSON.stringify(json, undefined, 2);
+            }
+            json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                var cls = 'number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'key';
+                    } else {
+                        cls = 'string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+
+        $('#responseDiv').html(_syntaxHighlight(_formatJson($('#responseData').val())));
+
+
+        $('#preview').on('click', function () {
+            var $this = $(this);
+            var url = $this.data('url');
+            var prefix = $this.data('prefix');
+            var type = $this.data('type');
+            var data = $('#requiresData').val();
+            var query = '?';
+            if (data) {
+                var temp = JSON.parse(data);
+                var requires = temp.data;
+
+                for (var i = 0, len = requires.length; i < len; i++) {
+                    var tempR = requires[i];
+
+                    if (tempR.type == 'Int') {
+                        query += (tempR.name + '=2222222&');
+                    }
+                    else {
+                        query += (tempR.name + '=xxxxxx&');
+                    }
+                }
+            }
+
+            if (prefix) {
+                url = prefix + '/' + url;
+            }
+
+            var href = window.location.origin + '/api/' + url + query;
+            // 如果是 jsonp
+            if (type == 'JSONP') {
+                href += 'callback=jcallback';
+            }
+            window.open(href);
+        })
+
+        //
+        $('#showMockDialog').on('click', function () {
+
+            var id = $(this).data('id');
+
+            if (id) {
+                $.get('/mock/historyList/async/' + id, function (response) {
+                    var data = response.data || [];
+                    var html = '';
+                    if (response.error) {
+                        html = '<p style="text-align: center;line-height: 32px;">获取数据异常:</p>';
+                    }
+                    else {
+                        //  需要移除最新版本
+                        if (data.length > 1) {
+                            for (var i = data.length - 2; i >= 0; i--) {
+                                var tempHtml = '<p><span>' + data[i].updatedByZh + '(' + data[i].updatedBy + ')</span>| <span>' + data[i].createdAt + '  <a href="javascript:;" data-user-name="' + data[i].updatedByZh + '" data-time="' + data[i].createdAt + '" data-user-id="' + data[i].updatedBy + '" data-id="' + data[i]._id + '" class="text-success compare">比较</a></span></p>'
+                                html += tempHtml;
+                            }
+                        }
+                    }
+                    if (!html) {
+                        html = '<p style="text-align: center;line-height: 32px;">暂无数据</p>'
+                    }
+
+                    $('#showMockHistory .p-list').html(html);
+
+                    $('#showMockHistory').modal('show');
+                })
+            }
+        })
+        //
+        $('#showMockHistory').on('click', '.compare', function () {
+            var $this = $(this);
+            var id = $this.data('id');
+            var userId = $this.data('userId');
+            var userName = $this.data('userName') || '';
+            var time = $this.data('time');
+            var user = userName + '(' + userId + ')';
+
+            if (id) {
+                $.get('/mock/history/async/' + id, function (response) {
+                    var data = response.data || {};
+                    if (response.error) {
+
+                    }
+                    else {
+                        // 获取到数据，然后比较展示
+                        $('#showMockHistory').modal('hide');
+                        $('#responseModalDivLeft').html(_syntaxHighlight(_formatJson($('#responseData').val())));
+
+                        // 更新右侧的数据
+                        $('#showMockHistoryCompare .current-version').text(user + '(' + time + ')');
+
+                        _updateRight(data);
+
+                        $('#showMockHistoryCompare').modal('show');
+
+                        //
+                        setTimeout(function () {
+                            _resizeCompare();
+
+                            _difference();
+                        }, 200)
+
+
+                    }
+                })
+            }
+            return false;
+        })
+
+
+        $('#showMockHistoryCompare .btn-back').on('click', function () {
+            $('#showMockHistoryCompare').modal('hide');
+            $('#showMockHistory').modal('show');
+        })
+
+
+        function _updateRight(data) {
+
+            $('#showMockHistoryCompare .right-method').html(data.method || '');
+
+            $('#showMockHistoryCompare .right-prefix').html(data.prefix || '');
+
+            var url = data.url;
+
+            if (data.prefix) {
+                url = data.prefix + '/' + data.url;
+            }
+
+            $('#showMockHistoryCompare .right-url').html('/api/' + url || '');
+
+            $('#showMockHistoryCompare .right-type').html(data.type || '');
+
+            $('#showMockHistoryCompare .right-desc').html(data.description || '');
+
+
+            // 入口参数
+            if (data.requires && data.requires.length > 0) {
+                var tempReq = data.requires;
+                var html = ''
+                for (var i = 0, len = tempReq.length; i < len; i++) {
+
+                    var tempSpan = '<span>非必填</span>';
+
+                    if (tempReq[i].isNeed == 'true') {
+                        tempSpan = '<span>必填</span>';
+                    }
+
+                    var temp = '<tr> ' +
+                        '<td>' + tempReq[i].name + '</td> ' +
+                        '<td> ' + tempSpan + ' </td> ' +
+                        '<td>' + tempReq[i].type + '</td> ' +
+                        '<td>' + tempReq[i].desc + '</td> ' +
+                        '</tr>';
+                    html += temp;
+                }
+                if (html) {
+                    $('#showMockHistoryCompare .right-table tbody').html($(html));
+                }
+
+            }
+            $('#responseModalDivRight').html(_syntaxHighlight(_formatJson(data.response)));
+        }
+
+
+        function _difference(type) {
+
+            _diffEasy();
+            _diffTable();
+            _diffResponse();
+        }
+
+        function _diffEasy() {
+            var list = ['method', 'url', 'desc', 'type','prefix'];
+
+            for (var i = 0, len = list.length; i < len; i++) {
+                var item = list[i];
+                var $left = $('.left-content').find('.left-' + item);
+                var $right = $('.right-content').find('.right-' + item);
+
+                var leftVal = $left.text();
+                var rightVal = $right.text();
+
+                if (leftVal !== rightVal) {
+                    $right.html('<del class="c-red">' + rightVal + '</del>');
+                }
+            }
+        }
+
+
+        function _diffTable() {
+            // table 要单独比较。
+            var $leftTable = $('.left-content').find('.left-table');
+            var $rightTable = $('.right-content').find('.right-table');
+            // 遍历 左边的 table ，取对应右边的 内容比较。
+            $leftTable.find('tr td').each(function () {
+                var $this = $(this);
+                var $tr = $this.parent();
+                var trIndex = $tr.index();
+                var tdIndex = $this.index();
+                var leftText = $.trim($this.text());
+
+                var $rightTr = $rightTable.find('tr:eq(' + (trIndex + 1) + ')');
+                if ($rightTr.length > 0) {
+                    var $rightItem = $rightTr.find('td:eq(' + (tdIndex) + ')');
+                    if ($rightItem.length > 0) {
+                        var rightText = $.trim($rightItem.text());
+                        if (rightText && ((leftText && leftText !== rightText) || (!leftText))) {
+                            $rightItem.html('<del class="c-red">' + rightText + '</del>');
+                        }
+                    }
+                }
+            });
+            var leftSize = $leftTable.find('tr').length;
+            var rightSize = $rightTable.find('tr').length;
+            var sub = rightSize - leftSize;
+
+            if (sub > 0) {
+                for (var i = 0; i < sub; i++) {
+                    var $rightTr1 = $rightTable.find('tr:eq(' + (leftSize + i) + ')');
+                    $rightTr1.find('td').each(function () {
+                        var $this = $(this)
+                        $this.html('<del class="c-red">' + $.trim($this.text()) + '</del>');
+                    });
+                }
+            }
+        }
+
+        function _diffResponse() {
+            var $left = $('#responseModalDivLeft');
+            var $right = $('#responseModalDivRight');
+
+            // 遍历左侧的 span
+            $left.find('span').each(function () {
+                var $this = $(this);
+                var index = $this.index();
+                var lText = $.trim($this.text());
+
+                var $r = $right.find('span:eq(' + index + ')');
+
+                if ($r) {
+                    var rText = $.trim($r.text());
+                    //
+                    if (rText && ((lText && lText !== rText) || (!lText))) {
+                        $r.html('<del>' + $r.text() + '</del>');
+                    }
+                }
+            })
+
+            var leftSize = $left.find('span').length;
+            var rightSize = $right.find('span').length;
+            var sub = rightSize - leftSize;
+            if (sub > 0) {
+                for (var i = 0; i < sub; i++) {
+                    var $r1 = $right.find('span:eq(' + (leftSize + i) + ')');
+                    $r1.html('<del>' + $r1.text() + '</del>');
+                }
+            }
+        }
+
+        //
+        function _resizeCompare() {
+            // 左右比较，然后取最大值，主要是针对于 描述 和接口参数
+            var list = ['url', 'desc', 'table'];
+
+            for (var i = 0, len = list.length; i < len; i++) {
+                var item = list[i];
+                var $left = $('.left-content').find('.left-' + item);
+                var $right = $('.right-content').find('.right-' + item);
+                var leftHeight = $left.height();
+                var rightHeight = $right.height();
+
+                if (leftHeight > rightHeight) {
+                    $right.closest('.controls').height(leftHeight);
+                }
+                else if (leftHeight < rightHeight) {
+                    $left.closest('.controls').height(rightHeight);
+                }
+
+            }
+
+        }
+    })
+</script>
+
+<% include footer %>

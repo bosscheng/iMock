@@ -1,0 +1,107 @@
+<% locals.leftItem = 'mock' %>
+<% locals.localHref = '/mock' %>
+<% include header %>
+<section class="box span12 info-index mock-index">
+    <div class="box-header">
+        <h2>mock 列表</h2>
+    </div>
+    <div class="box-content">
+        <div class="info-sync mock-search">
+            <form action="/mock/search" method="get">
+                <div class="form-inline">
+                    <label for="">关键字：</label>
+                    <input type="text" name="q" value="<%= locals.q %>" class="input input-xxlarge" placeholder="url or 描述 or 分类" required autocorrect="off" autocapitalize="off" autocomplete="off">
+                    <button type="submit" class="btn btn-success" id="sync-btn">查询</button>
+                </div>
+            </form>
+            <a href="/mock/create" class="btn btn-danger btn-large">创建接口</a>
+        </div>
+    </div>
+    <div class="mock-table">
+        <table class="table table-bordered table-hover table-striped">
+            <colgroup>
+                <col width="50">
+                <col width="60">
+                <col width="60">
+                <col width="286">
+                <col width="286">
+                <col width="200">
+            </colgroup>
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>method</th>
+                <th>分类</th>
+                <th>URL</th>
+                <th>描述</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% mocks.forEach(function(item, i){ %>
+            <tr>
+                <td>
+                    <%= i + 1 %>
+                </td>
+                <td>
+                    <%= item.method %>
+                </td>
+                <td>
+                    <% if(item.prefix){ %>
+                    <a href="/mock/search?prefix=1&q=<%= item.prefix %>" title="<%=item.prefixDescription%>"><%= item.prefix %></a>
+                    <% } %>
+                </td>
+                <td>
+                    <% if(item.prefix){%>
+                    <a href="/mock/show/<%= item._id %>">/api/<%=item.prefix%>/<%=item.url %></a>
+                    <%}else{%>
+                    <a href="/mock/show/<%= item._id %>">/api/<%=item.url %></a>
+                    <% } %>
+                </td>
+                <td>
+                    <%= item.description %>
+                </td>
+                <td>
+                    <a href="/mock/show/<%= item._id %>" class="btn btn-small btn-info">详情</a>
+                    <a href="/mock/edit/<%= item._id %>" class="btn btn-small btn-warning">编辑</a>
+                    <button type="button" class="btn btn-small btn-danger item-delete" data-id="<%= item._id %>">删除
+                    </button>
+                </td>
+            </tr>
+            <% }); %>
+            <% if(mocks.length ==0) {%>
+            <tr>
+                <td colspan="6">
+                    <p class="no-data">暂无数据</p>
+                </td>
+            </tr>
+            <%}%>
+            </tbody>
+        </table>
+
+        <% include pager %>
+    </div>
+</section>
+<script>
+    $(function () {
+
+        $('.item-delete').on('click', function () {
+            var $this = $(this);
+            var id = $this.data('id');
+
+            if (id) {
+                if (confirm('确定删除数据？')) {
+                    $.post('/mock/delete', {id: id}, function (response) {
+                        if (response.error) {
+                            alert(response.error);
+                        }
+                        else {
+                            window.location.reload();
+                        }
+                    })
+                }
+            }
+        })
+    })
+</script>
+<% include footer %>

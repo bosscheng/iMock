@@ -1,0 +1,86 @@
+<% locals.leftItem = 'mock' %>
+<% include header %>
+
+<section class="box span12 mock mock-new">
+    <div class="box-header">
+        <h2>创建接口</h2>
+    </div>
+    <div class="box-content">
+        <form action="/mock/create" class="form-horizontal" method="post">
+            <div class="control-group">
+                <label for="" class="control-label">method</label>
+                <div class="controls">
+                    <select name="method">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="" class="control-label"></span>分类</label>
+                <div class="controls">
+                    <input type="text" name="prefix" placeholder="分类名称" maxlength="50" autocorrect="off" autocapitalize="off" autocomplete="off">
+                    <div class="prefix-search" id="prefixSearch">
+
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="" class="control-label"><span class="require-tips">*&nbsp;</span>URL</label>
+                <div class="controls">
+                    <div class="input-prepend">
+                        <span class="add-on">/api/</span>
+                        <input type="text" name="url" maxlength="1000" placeholder="test">
+                    </div>
+                    <span class="help-inline require-tips">请输入URL地址</span>
+                    <span class="help-inline3 require-tips">当前url已经存在</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="" class="control-label">描述</label>
+                <div class="controls">
+                    <input type="text" name="description" maxlength="1000" placeholder="描述很重要!">
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="" class="control-label">接口入参</label>
+                <div class="controls">
+                    <textarea name="requires" placeholder='{"key":"描述"}'></textarea>
+                    <span class="help-inline require-tips">格式错误</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="" class="control-label"><span class="require-tips">*&nbsp;</span>接口返回数据</label>
+                <div class="controls">
+                    <textarea name="response" placeholder='{"key":"value"}'></textarea>
+                    <span class="help-inline require-tips">请输入返回数据</span>
+                    <span class="help-inline2 require-tips">格式错误</span>
+                </div>
+                <div class="control-type">
+                    <h4>返回类型：</h4>
+                    <label for="t1" class="radio">
+                        <input type="radio" value="JSON" name="type" id="t1" checked>JSON
+                    </label>
+                    <label for="t2" class="radio">
+                        <input type="radio" value="JSONP" name="type" id="t2">JSONP(请求参数需要有?callback=foo)
+                    </label>
+                    <label for="t3" class="radio">
+                        <input type="radio" value="TEXT" name="type" id="t3">TEXT
+                    </label>
+                </div>
+
+                <div class="controls">
+                    <p class="c-red">支持 mock.js 语法：<a href="http://mockjs.com/examples.html" target="_blank">http://mockjs.com/examples.html</a></p>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <a href="/mock" class="btn btn-inverse">返回</a>
+                    <button type="submit" class="btn btn-success" id="submitBtn">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+<script src="/assets/js/mock.js?t=<%= locals.stamp %>"></script>
+<% include footer %>

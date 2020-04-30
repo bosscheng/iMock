@@ -1,2 +1,2 @@
 # iMock
- a easy mock
+ a node easy mock by express

@@ -1,0 +1,53 @@
+<% locals.leftItem = 'index' %>
+<% locals.localHref = '/' %>
+<% include header %>
+<section class="box span12 index-index">
+    <div class="box-header">
+        <span>组件列表</span>
+    </div>
+    <div class="box-content clearfix">
+        <form action="/"  method="get" id="searchTypeForm" style="margin-bottom: 0">
+            <div class="box-content_search">
+                <label for="">组件类型：</label>
+                <select name="type" class="">
+                    <option value="">全部</option>
+                    <% projectTypes.forEach(function(item){ %>
+                    <option value="<%=item%>" <% if(item == type ){ %> selected <% } %> ><%=item%></option>
+                    <%});%>
+                </select>
+            </div>
+        </form>
+        <p class="box-content_tips">组件个数：<%= pager.total || allPackages.length %></p>
+
+        <div class="content_list">
+            <% if(allPackages.length >0){ %>
+            <% allPackages.forEach(function(item){ %>
+                <div class="content_item">
+                    <div style="margin-bottom: 4px">
+                        <a href="/package/<%=encodeURIComponent(item.title)%>" class=""><%= item.title %></a>&nbsp;&nbsp;
+                        <span class="label label-success"><%= item.version%></span>&nbsp;&nbsp;
+                        <span class="label label-important"><%= item.type%></span>
+                        <a class="uid" href="/user/<%= item.uid %>"><%= item.userNameZh || item.uid%></a>
+                    </div>
+                    <div class="description">
+                        <%= item.description %>
+                    </div>
+                </div>
+            <%});%>
+            <% }else{ %>
+            <p class="info-item_none">暂无数据</p>
+            <% } %>
+            <% include pager %>
+        </div>
+
+    </div>
+</section>
+<script>
+    $(function () {
+        $('.box-content_search select').on('change', function () {
+            $('#searchTypeForm').submit();
+        });
+    })
+</script>
+
+<% include footer %>

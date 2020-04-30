@@ -1,0 +1,121 @@
+<% include header %>
+
+<section class="box span12 demo-index">
+    <div class="box-header">
+        <h2><%= name %> demo 演示 <a href="/package/<%=encodeURIComponent(name)%>" class="btn-link">返回</a></h2>
+    </div>
+    <div class="box-content clearfix">
+        <div class="area-code">
+            <div class="area-code_tip">
+                <span>编辑您的代码</span>
+                <button type="button" class="btn btn-success" id="demoRun">运行</button>
+            </div>
+
+            <textarea name="" id="" cols="30" rows="10"><%= demo%></textarea>
+
+            <form action="/package/<%=encodeURIComponent(name)%>/run" method="post" target="demo" id="demoForm">
+                <input type="hidden" value="" name="code">
+                <input type="hidden" value="<%= name %>" name="package">
+            </form>
+        </div>
+        <div class="area-move"></div>
+
+        <div class="area-result">
+            <div class="area-code_tip">
+                <span>结果展示</span>
+                <button type="button" class="btn btn-danger" id="previewAllStream">全屏</button>
+            </div>
+            <iframe frameborder="0" name="demo"></iframe>
+            <div class="shim">
+
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    $(function () {
+        $('#demoRun').on('click', function () {
+            var html = $('.demo-index textarea').val();
+            html = html.replace(/=/gi, "equalSign");
+            html = html.replace(/script/gi, "scriptTag");
+            $('.demo-index [name="code"]').val(html);
+            $('#demoForm').submit();
+        });
+
+        $('#demoRun').click();
+
+        // 拖拽
+        $('.demo-index .area-move').on('mousedown', function (e) {
+            $(document).off('mousemove');
+            var $innerLeft = $('.demo-index .area-code');
+            var $innerRight = $('.demo-index .area-result');
+            var $innerMove = $('.demo-index .area-move');
+
+            var sideBarWidth = $('#sidebar-left').width();
+            var wrapWidth = $('.box-content').width();
+            var wrapPaddingLeft = 28;
+            var minOffsetWidth = sideBarWidth + wrapPaddingLeft;
+            var maxOffsetWidth = minOffsetWidth + wrapWidth;
+
+            $('.demo-index .shim').show();
+
+            // 监听 document move
+            $(document).on('mousemove', function (ev) {
+                var mouseLeft = ev.pageX;
+                // 超过界限了
+                if (mouseLeft > minOffsetWidth && mouseLeft < maxOffsetWidth) {
+                    // 相减
+                    var minus = mouseLeft - minOffsetWidth;
+                    // 百分比
+                    var percent = parseFloat((minus) / wrapWidth).toFixed(6);
+                    percent = percent * 100;
+
+                    if (percent > 15 && percent < 85) {
+
+                        $innerMove.css({
+                            left: percent + '%'
+                        });
+
+                        $innerLeft.css({
+                            width: percent + '%'
+                        });
+                        $innerRight.css({
+                            width: (99 - percent) + '%'
+                        });
+                    }
+                }
+            });
+        });
+
+
+        //
+        $(document).on('mouseup', function () {
+            $(document).off('mousemove');
+            $('.demo-index .shim').hide();
+            return false;
+        });
+
+
+        var preWidth = 0;
+        $('#previewAllStream').on('click', function () {
+            var $result = $('.demo-index .area-result');
+
+            if ($result.hasClass('all-stream')) {
+                $result.removeClass('all-stream');
+                $(this).text('全屏');
+                $result.css({
+                    width: preWidth
+                });
+            }
+            else {
+                preWidth = $result.css('width');
+                $result.addClass('all-stream');
+                $result.css({
+                    width: "100%"
+                });
+                $(this).text('退出全屏');
+            }
+        });
+    })
+</script>
+<% include footer %>

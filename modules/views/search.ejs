@@ -1,0 +1,33 @@
+<% include header %>
+
+<section class="box span12 info-index user-index">
+    <div class="box-header">
+        <h2>搜索结果</h2>
+    </div>
+    <div class="box-content">
+        <p class="box-content_tips">组件个数：<%= allPackages.length %></p>
+
+        <div class="info-items">
+            <% if(allPackages.length >0){ %>
+            <% allPackages.forEach(function(item){ %>
+            <p class="info-item">
+                <a href="/package/<%=encodeURIComponent(item.title)%>"><%=item.title%></a>&nbsp;&nbsp;
+                <span class="label label-success"><%=item.version%></span>&nbsp;&nbsp;
+                <span class="label label-important"><%=item.type%></span>&nbsp;&nbsp;
+                <%= item.description %>
+            </p>
+            <%});%>
+            <%　} else { %>
+            <p class="info-item_none">暂无数据</p>
+            <% } %>
+        </div>
+    </div>
+</section>
+<input type="hidden" id="q" value="<%= q %>">
+<% include footer %>
+<script>
+    $(function () {
+        var q = $('#q').val();
+        $('#searchInput').val(q);
+    });
+</script>

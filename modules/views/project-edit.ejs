@@ -1,0 +1,208 @@
+<% include header %>
+
+<section class="box span12">
+    <div class="box-header">
+        <h2>编辑<span><%= name %></span>的信息</h2>
+    </div>
+    <div class="box-content">
+        <form action="/package/edit" class="form-horizontal" method="post">
+            <input type="hidden" name="id" value="<%= id %>">
+            <input type="hidden" name="name" value="<%= name %>">
+            <div class="control-group">
+                <label for="" class="control-label">类型</label>
+                <div class="controls">
+                    <input type="text" name="type" maxlength="50" placeholder="类型" value="<%= type %>"
+                           autocorrect="off" autocapitalize="off" autocomplete="off">
+                    <div class="prefix-search type-search" id="typeSearch">
+
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="" class="control-label">标签（英文逗号隔开）</label>
+                <div class="controls">
+                    <input type="text" name="label" value="<%= label %>">
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" class="btn btn-success">修改</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+    $(function () {
+        var _pre_type_data = '';
+        var keyCode = {
+            ESC: 27,
+            TAB: 9,
+            ENTER: 13,
+            LEFT: 37,
+            UP: 38,
+            DOWN: 40
+        };
+
+        $('#typeSearch').on('click', 'li', function () {
+            var $this = $(this);
+            _handleTypeClick($this.data('name'));
+            return false;
+        });
+
+        $('body').on('click', function (e) {
+            var $target = $(e.target);
+            if (!$target.is('[name="type"]')) {
+                $('#typeSearch').hide();
+            }
+        });
+
+        $('[name="type"]').on('keydown', function (e) {
+            var $this = $(this);
+            var arrow = e.which;
+            if (!(arrow == keyCode.UP || arrow == keyCode.DOWN || arrow == keyCode.ENTER)) {
+                return;
+            }
+
+
+            var preIndex = $('#typeSearch li.s-selected').index();
+            var size = $('#typeSearch li').length;
+            var nextIndex = 0;
+
+            if (arrow == keyCode.UP || arrow == keyCode.DOWN) {
+                $('#typeSearch li').removeClass('s-selected');
+            }
+
+            if (arrow == keyCode.UP) {
+                if (preIndex - 1 >= 0) {
+                    nextIndex = preIndex - 1;
+                }
+                else {
+                    nextIndex = size - 1;
+                }
+                setTimeout(function () {
+                    // 光标定位在最后
+                    var preVal = $this.val();
+                    $this.val('').focus().val(preVal);
+                }, 1);
+            }
+            //
+            else if (arrow == keyCode.DOWN) {
+                if (preIndex + 1 >= size) {
+                    nextIndex = 0
+                }
+                else {
+                    nextIndex = preIndex + 1;
+                }
+            }
+            // enter 按键
+            else if (arrow == keyCode.ENTER) {
+                var preIndex = $('#typeSearch li.s-selected').index();
+                // 如果存在
+                if (preIndex !== -1) {
+                    var preText = $('#typeSearch li.s-selected').data('name');
+                    _handleTypeClick(preText);
+
+                    return false;
+                }
+            }
+
+            $('#typeSearch li').eq(nextIndex).addClass('s-selected');
+
+            return false;
+        });
+
+        $('[name="type"]').on('input propertychange', function () {
+            var $this = $(this);
+            var val = $.trim($this.val());
+
+            _searchType(val);
+
+        });
+
+
+        $('[name="type"]').on('focus', function () {
+            var $this = $(this);
+            if (!_pre_type_data) {
+                // 拉取所有数据
+                $.get('/package/async/typeList', function (res) {
+                    if (res.data) {
+                        _renderTypeList(res.data);
+                        _pre_type_data = res.data; // 缓存起来
+                    }
+                })
+            }
+            else {
+                _selectPreType();
+            }
+            return false;
+        });
+        
+        // 
+        function _renderTypeList(data) {
+            var html = '';
+            var $typeSearch = $('#typeSearch');
+
+            if (data.length > 0) {
+                $.each(data, function (i, item) {
+                    var tempHtml = '<li data-name="' + item + '">' + item + '</li>';
+                    html += tempHtml;
+                });
+
+                html = '<ul>' + html + '</ul>';
+                $typeSearch.html(html).show();
+
+                _selectPreType();
+            }
+            else {
+                $typeSearch.empty().hide();
+            }
+        }
+
+        //
+        function _selectPreType() {
+            var val = $.trim($('[name="type"]').val());
+            var _lock = false;
+            if (val) {
+                $('#typeSearch li').each(function () {
+                    if ($(this).text() == val) {
+                        $(this).addClass('s-selected');
+                        _lock = true;
+                    }
+                });
+
+                if (_lock) {
+                    $('#typeSearch').show();
+                }
+            }
+            else {
+                $('#typeSearch').show();
+            }
+        }
+
+
+        function _handleTypeClick(preText){
+            $('[name="type"]').val(preText);
+            $('#typeSearch').empty().hide();
+        }
+
+        function _searchType(pre) {
+            pre = ('' + $.trim(pre)).toLowerCase();
+            var result = [];
+            if (_pre_type_data) {
+                //
+                $.each(_pre_type_data, function (i, item) {
+                    var tempItem = (item).toLowerCase();
+                    if (tempItem.indexOf(pre) !== -1) {
+                        result.push(item);
+                    }
+                })
+
+            }
+            _renderTypeList(result);
+        }
+    });
+</script>
+
+<% include footer %>

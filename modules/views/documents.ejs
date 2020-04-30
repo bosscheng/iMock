@@ -1,0 +1,18 @@
+<% locals.leftItem = 'documents' %>
+<% include header %>
+<section class="box span12 doc-index">
+    <div class="box-header">
+        <h2> 文档列表 </h2>
+    </div>
+    <div class="box-content">
+        <ul>
+            <% docs.forEach(function (doc) { %>
+            <li>
+                <a href="<%= doc.url %>"><%= doc.title %></a>
+                <span class="label label-important"><%= doc.version %></span>
+            </li>
+            <% }) %>
+        </ul>
+    </div>
+</section>
+<% include footer %>

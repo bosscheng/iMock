@@ -1,0 +1,25 @@
+<div class="pager-wrap clearfix">
+    <% if(pager.totalPage > 1){%>
+    <div class="span12 center" style="margin-left: 0">
+        <div class="dataTables_paginate paging_bootstrap pagination">
+            <ul>
+                <% if(pager.page ==1){%>
+                <li class="prev disabled"><a href="javascript:;">← 前一页</a></li>
+                <% }else{ %>
+                <li class="prev"><a href="<%= locals.localHref %>?page=<%= pager.page - 1 %>">← 前一页</a></li>
+                <% } %>
+
+                <% for(var i = 0,len = pager.totalPage;i<len;i++){%>
+                <li <% if(pager.page == (i+1)){%> class="active" <%}%>><a href="<%= locals.localHref %>?page=<%= i+1 %>"><%= i+1 %></a></li>
+                <% } %>
+
+                <% if(pager.page == pager.totalPage){%>
+                <li class="next disabled"><a href="javascript:;">后一页 → </a></li>
+                <% }else{ %>
+                <li class="next"><a href="<%= locals.localHref %>?page=<%= pager.page + 1 %>">后一页 → </a></li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+    <% } %>
+</div>

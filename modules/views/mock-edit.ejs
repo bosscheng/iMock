@@ -1,0 +1,169 @@
+<% locals.leftItem = 'mock' %>
+
+<% include header %>
+
+<section class="box span12 mock mock-new mock-edit">
+    <div class="box-header">
+        <h2>修改接口</h2>
+    </div>
+    <div class="box-content">
+        <form action="/mock/edit" class="form-horizontal" method="post">
+            <input type="hidden" value="<%= mock._id %>" name="id">
+            <div class="control-group">
+                <label for="" class="control-label">method</label>
+                <div class="controls">
+                    <select name="method">
+                        <option value="GET" <% if(mock.method == 'GET'){ %> selected <% } %>>GET</option>
+                        <option value="POST" <% if(mock.method == 'POST'){ %> selected <% } %>>POST</option>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="" class="control-label">分类</label>
+                <div class="controls">
+                    <input type="text" name="prefix" maxlength="50" placeholder="分类名称" value="<%= mock.prefix %>" autocorrect="off" autocapitalize="off" autocomplete="off">
+                    <div class="prefix-search" id="prefixSearch">
+
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="" class="control-label"><span class="require-tips">*&nbsp;</span>URL</label>
+                <div class="controls">
+                    <div class="input-prepend">
+                        <% if(mock.prefix){%>
+                        <span class="add-on">/api/<%= mock.prefix %>/</span>
+                        <%}else{%>
+                        <span class="add-on">/api/</span>
+                        <% } %>
+                        <input type="text" name="url" maxlength="1000" placeholder="test" value="<%= mock.url %>">
+                    </div>
+                    <span class="help-inline require-tips">请输入URL地址</span>
+                    <span class="help-inline3 require-tips">当前url已经存在</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="" class="control-label">描述</label>
+                <div class="controls">
+                    <input type="text" name="description" maxlength="1000" placeholder="描述很重要!" value="<%= mock.description %>">
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="" class="control-label">接口入参</label>
+                <div class="controls">
+                    <div class="table-wrap">
+                        <table class="table table-bordered ">
+                            <colgroup>
+                                <col width="20%">
+                                <col width="15%">
+                                <col width="15%">
+                                <col width="40%">
+                                <col width="10%">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>名称</th>
+                                <th>是否必填</th>
+                                <th>类型</th>
+                                <th>说明</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% mock.requires && mock.requires.forEach(function(item, i){  %>
+                            <tr>
+                                <td>
+                                    <input type="text" class="input-mini" data-name="name" placeholder="名称" value="<%= item.name %>">
+                                </td>
+                                <td>
+                                    <select data-name="isNeed">
+                                        <option value="false" <% if(item.isNeed === 'false' || item.isNeed === false){ %> selected <%}%>>否</option>
+                                        <option value="true" <% if(item.isNeed === 'true' || item.isNeed === true){ %> selected <%}%>>是</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select data-name="type">
+                                        <option value="String" <% if(item.type === 'String'){ %> selected <%}%> >String</option>
+                                        <option value="Int" <% if(item.type === 'Int'){ %> selected <%}%>>Int</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" class="input-mini" data-name="desc" placeholder="描述" value="<%= item.desc %>">
+                                </td>
+                                <td>
+                                    <input type="button" class="btn btn-small btn-danger delete-item" value="删除">
+                                </td>
+                            </tr>
+                            <% }); %>
+                            </tbody>
+                        </table>
+                        <button type="button" class="btn add-item btn-primary" id="addRequest">增加入参</button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="control-group">
+                <label for="" class="control-label"><span class="require-tips">*&nbsp;</span>接口返回数据</label>
+                <div class="controls">
+                    <textarea name="response" placeholder='{"key":"value"}'><%= mock.response %></textarea>
+                    <span class="help-inline require-tips">请输入返回数据</span>
+                    <span class="help-inline2 require-tips">格式错误</span>
+                </div>
+                <div class="control-type">
+                    <h4>返回类型：</h4>
+                    <label for="t1" class="radio">
+                        <input type="radio" value="JSON" name="type" id="t1" <% if(mock.type == 'JSON'){ %> checked <% } %>>JSON
+                    </label>
+                    <label for="t2" class="radio">
+                        <input type="radio" value="JSONP" name="type" id="t2" <% if(mock.type == 'JSONP'){ %> checked <% } %>>JSONP(请求参数需要有?callback=foo)
+                    </label>
+                    <label for="t3" class="radio">
+                        <input type="radio" value="TEXT" name="type" id="t3" <% if(mock.type == 'TEXT'){ %> checked <% } %>>TEXT
+                    </label>
+                </div>
+            </div>
+            <input type="hidden" value="" name="requires">
+            <div class="control-group">
+                <div class="controls">
+                    <a href="/mock" class="btn btn-inverse">返回</a>
+                    <button type="submit" class="btn btn-success">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+<script>
+    var IS_EDIT = true;
+</script>
+<script src="/assets/js/mock.js"></script>
+<script>
+    //
+    $(function () {
+        //
+        $('#addRequest').on('click',function () {
+            var html = '<tr>' +
+                '<td><input type="text" class="input-mini" value="" data-name="name" placeholder="名称"></td>' +
+                '<td>' +
+                '<select data-name="isNeed"><option value="false">否</option><option value="true">是</option></select>' +
+                '</td>' +
+                '<td><select data-name="type"><option value="String">String</option><option value="Int">Int</option><option value="Object">Object</option></select></td>' +
+                '<td><input type="text" class="input-mini" value="" placeholder="描述" data-name="desc"> </td>' +
+                '<td><input type="button" class="btn btn-small btn-danger delete-item" value="删除"></td>' +
+                '</tr>'
+
+            $('.table tbody').append($(html));
+        });
+
+        // 删除
+        $('.table').on('click','.delete-item',function () {
+            var $parent = $(this).closest('tr');
+
+            // 如果名称和标题都没有写，就直接删除，否则提示之后再删除
+            $parent.remove();
+        })
+
+    })
+</script>
+
+
+<% include footer %>

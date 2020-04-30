@@ -1,0 +1,190 @@
+<% locals.leftItem = 'mock-prefix' %>
+<% locals.localHref = '/mock/prefix' %>
+<% include header %>
+<section class="box span12 mock-prefix">
+    <div class="box-header">
+        <h2>mock 分类</h2>
+    </div>
+    <div class="box-content">
+        <div class="info-sync mock-search">
+            <form action="/mock/prefix/create" method="post" id="createSubmit">
+                <h2>新增操作</h2>
+
+                <div class="form-inline">
+                    <label for="">名&nbsp;&nbsp;&nbsp;称：</label>
+                    <input type="text" name="name" class="input input-xlarge" placeholder="名称一旦被创建，就不能被修改" required>
+                    <label for="">描&nbsp;&nbsp;&nbsp;述：</label>
+                    <input type="text" name="description" placeholder="描述很重要" class="input input-xlarge" required>
+                    <button type="submit" class="btn btn-danger">新增</button>
+                    <span class="text-tip c-red"></span>
+                </div>
+            </form>
+            <hr/>
+            <form action="/mock/prefix/search" method="get">
+                <h2>查询</h2>
+
+                <div class="form-inline">
+                    <label for="">关键字：</label>
+                    <input type="text" name="q" value="<%= locals.q %>" class="input input-xxlarge"
+                           placeholder="名称 or 描述" required autocorrect="off" autocapitalize="off" autocomplete="off">
+                    <button type="submit" class="btn btn-success" id="sync-btn">查询</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    <div class="mock-table">
+        <table class="table table-bordered table-hover table-striped">
+            <colgroup>
+                <col width="5%">
+                <col width="15%">
+                <col width="40%">
+                <col width="15%">
+                <col width="15%">
+                <col>
+            </colgroup>
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>名称</th>
+                <th>描述</th>
+                <th>创建时间</th>
+                <th>修改时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% mockPrefix.forEach(function(item, i){ %>
+            <tr>
+                <td>
+                    <%= i + 1 %>
+                </td>
+                <td>
+                    <a href="/mock/search?prefix=1&q=<%= item.name %>"><%= item.name %></a>
+                </td>
+                <td>
+                    <span class="item-desc"><%= item.description %></span>
+
+                    <form action="/mock/prefix/update" method="post" style="display: none;" class="item-form">
+                        <input type="text" value="<%= item.description %>" name="description" data-id="<%=item._id%>">
+                        <input type="submit" value="确定" class="btn btn-small btn-success">
+                        <input type="button" value="取消" class="btn btn-small btn-danger item-form-cancel">
+                    </form>
+                </td>
+                <td>
+                    <%= locals.moment(item.createdAt).format('YYYY-MM-DD HH:mm') %>
+                </td>
+                <td class="updateTime">
+                    <%= locals.moment(item.updatedAt).format('YYYY-MM-DD HH:mm') %>
+                </td>
+                <td>
+                    <a href="javascript:;" class="btn btn-small btn-warning item-edit">编辑</a>
+                </td>
+            </tr>
+            <% }); %>
+            <% if(mockPrefix.length == 0) { %>
+            <tr>
+                <td colspan="8">
+                    <p class="no-data">暂无数据</p>
+                </td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+
+        <% include pager %>
+    </div>
+</section>
+<script>
+    $(function () {
+        $('#createSubmit').on('submit', function () {
+
+            var $submit = $('#createSubmit');
+
+            var name = $submit.find('[name="name"]').val();
+            var description = $submit.find('[name="description"]').val();
+
+            if (name && description) {
+                var data = {
+                    name: $.trim(name),
+                    description: $.trim(description)
+                }
+                $.post('/mock/prefix/create', data, function (response) {
+                    if (response.error) {
+                        $submit.find('.text-tip').text(response.error);
+                        setTimeout(function () {
+                            $submit.find('.text-tip').hide();
+                        }, 3 * 1000)
+                    }
+                    else {
+                        window.location.reload();
+                    }
+                });
+            }
+
+
+            return false;
+        })
+
+        //
+        $('.item-edit').on('click', function () {
+            var $tr = $(this).closest('tr');
+            $tr.find('form').show();
+            $tr.find('.item-desc').hide();
+        })
+
+
+        //
+        $('.item-form').on('submit', function () {
+            var $this = $(this);
+            var $desc = $this.find('[name="description"]');
+            var description = $desc.val();
+            var id = $desc.data('id');
+
+            if (id) {
+
+                var date = {
+                    id: id,
+                    description: description
+                }
+
+                $.post('/mock/prefix/update', date, function (response) {
+                    if (response.error) {
+
+                    }
+                    else {
+                        var updateUser = response.update;
+
+                        var updateName = updateUser.updatedByZh + ' (' + updateUser.updatedBy + ')';
+                        var updateTime = updateUser.updatedAt;
+
+
+                        var $tr = $this.closest('tr');
+                        $tr.find('form').hide();
+                        $tr.find('[name="description"]').val('');
+                        $tr.find('.item-desc').text(description).show();
+
+                        $tr.find('.updatedName').text(updateName);
+                        $tr.find('.updateTime').text(updateTime);
+                    }
+                })
+            }
+
+
+            return false;
+        })
+
+        $('.item-form .item-form-cancel').on('click', function () {
+            var $this = $(this);
+            var $tr = $this.closest('tr');
+            $tr.find('form').hide();
+            $tr.find('[name="description"]').val('');
+            $tr.find('.item-desc').show();
+        })
+
+
+    })
+
+</script>
+
+<% include footer %>

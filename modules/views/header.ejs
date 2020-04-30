@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<% include variables %>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title><%= locals.title %></title>
+    <meta name="author" content="wancheng">
+    <meta name="keyword" content="iMock">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/assets/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/lib/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="/assets/css/style.css?t=<%= locals.stamp %>" rel="stylesheet">
+    <link href="/assets/css/style-new.css?t=<%= locals.stamp %>" rel="stylesheet">
+    <link href="/assets/css/style-responsive.css?t=<%= locals.stamp %>" rel="stylesheet">
+    <script src="/assets/js/lib/jquery-1.9.1.min.js"></script>
+    <script src="/assets/js/lib/bootstrap.js"></script>
+    <script src="/assets/js/home.js?t=<%= locals.stamp %>"></script>
+</head>
+<body>
+<header>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="brand" href="/"><span>iMock</span></a>
+                <!-- start: Header Menu -->
+                <!-- end: Header Menu -->
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-search_result" id="searchResult">
+
+    </div>
+</header>
+<section class="container-fluid-full">
+    <div class="row-fluid">
+        <!-- 左侧 栏目-->
+        <div id="sidebar-left" class="span2">
+            <div class="nav-collapse sidebar-nav">
+                <ul class="nav nav-tabs nav-stacked main-menu">
+                    <li >
+                        <a href="javascript:;" class="dropmenu">
+                            <i class="icon-folder-close-alt"></i>
+                            <span class="hidden-tablet">mock 平台</span>
+                        </a>
+                        <ul <% if(locals.leftItem == "mock" || locals.leftItem == "mock-prefix"){%>  style="display: block;" <% } %>>
+                            <li <% if(locals.leftItem == "mock"){%>  class="active" <% } %>>
+                                <a href="/mock" style="padding-left: 28px">
+                                    <i class="icon-signal"></i>
+                                    <span class="hidden-tablet">mock 列表</span>
+                                </a>
+                            </li>
+                            <li <% if(locals.leftItem == "mock-prefix"){%>  class="active" <% } %>>
+                                <a href="/mock/prefix" style="padding-left: 28px">
+                                    <i class="icon-th-list"></i>
+                                    <span class="hidden-tablet">mock 分类</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                    </li>
+                    <li <% if(locals.leftItem == "documents"){%>  class="active" <% } %>>
+                        <a href="/documents">
+                            <i class="icon-book"></i>
+                            <span class="hidden-tablet">文档</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- 导航条-->
+        <div class="span10" id="content">
+            <div class="row-fluid">
+
