@@ -1,5 +1,5 @@
 # iMock
- a node easy mock by express
+ a node easy mock by express support mockjs
 
 # 背景
 以前撸的一个简陋版本的 mock 平台，基于 express的，用mongoDB 存储数据，支持mockjs语法。

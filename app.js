@@ -99,38 +99,6 @@ app.get('/mock/prefixList/async', mock.asyncPrefixList);
 app.get('/api/*', mock.api);
 app.post('/api/*', mock.api);
 
-
-// 异常处理
-app.get('*', function (req, res) {
-    let reqUrl = req.originalUrl;
-    // 如果是 以 js,css,png,jpg 等静态资源结尾的，则需要重定向请求。
-    const sourceArray = ['js', 'css', 'png', 'gif', 'bmp', 'jpg', 'jpeg'];
-
-    let tempIndex = reqUrl.lastIndexOf('.');
-
-    if (tempIndex !== -1) {
-        let suffix = reqUrl.substring(tempIndex + 1);
-
-        // 如果是资源请求
-        if (_.indexOf(sourceArray, suffix) !== -1) {
-            reqUrl = utils.helpReqResourceUrl(reqUrl);
-            res.redirect(reqUrl);
-        } else {
-            //
-            res.status(404).render('404.ejs', {
-                title: '404',
-                user: req.session.user,
-            });
-        }
-    } else {
-        //
-        res.status(404).render('404.ejs', {
-            title: '404',
-            user: req.session.user,
-        });
-    }
-});
-
 app.listen(app.get('port'));
 
 console.log('listen port:' + app.get('port'));

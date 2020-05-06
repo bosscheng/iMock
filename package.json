@@ -1,6 +1,7 @@
 {
   "name": "iMock",
   "version": "1.0.0",
+  "description": "a node easy mock by express support mockjs",
   "scripts": {
     "host-dev": "nodemon --debug ./app.js localhost 3030",
     "dev": "node app.js",
