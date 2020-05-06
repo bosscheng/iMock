@@ -1,6 +1,6 @@
 /**
  * date: 2017/5/31
- * author: wancheng(17033234)
+ * author: wancheng
  * desc: mock url 前缀(分类)
  */
 

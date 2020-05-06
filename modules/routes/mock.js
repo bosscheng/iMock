@@ -1,6 +1,6 @@
 /**
  * date: 2017/5/23
- * author: wancheng(17033234)
+ * author: wancheng
  * desc:mock 平台 api
  */
 

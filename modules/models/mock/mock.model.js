@@ -1,6 +1,6 @@
 /**
  * date: 2017/5/23
- * author: wancheng(17033234)
+ * author: wancheng
  * desc: mock 对象
  */
 const mongoose = require('mongoose');

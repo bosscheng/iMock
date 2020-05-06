@@ -1,6 +1,6 @@
 /**
  * date: 2017/5/26
- * author: wancheng(17033234)
+ * author: wancheng
  * desc: mock 操作流水表
  */
 /**

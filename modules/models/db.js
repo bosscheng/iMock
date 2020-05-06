@@ -1,6 +1,6 @@
 /**
  * date: 2017/5/4
- * author: wancheng(17033234)
+ * author: wancheng
  * desc: 数据库连接
  */
 

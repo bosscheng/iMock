@@ -22,9 +22,9 @@
             <label for="" class="control-label">URL :</label>
             <div class="controls">
                 <% if(mock.prefix){ %>
-                <span>http://fetools.cnsuning.com/api/<%= mock.prefix %>/<%= mock.url %></span>
+                <span>http://localhost:<%= locals.port %>/api/<%= mock.prefix %>/<%= mock.url %></span>
                 <% }else{ %>
-                <span>http://fetools.cnsuning.com/api/<%= mock.url %></span>
+                <span>http://localhost:<%= locals.port %>/api/<%= mock.url %></span>
                 <% } %>
             </div>
         </div>
@@ -131,7 +131,7 @@
         <h3 id="myModalLabel">流水表</h3>
     </div>
     <div class="modal-body">
-        <p class="p-title"><span>修改人</span>| <span>修改时间</span></p>
+        <p class="p-title"><span>修改时间</span></p>
         <div class="p-list">
 
         </div>
@@ -146,7 +146,7 @@
     <div class="modal-header">
         <h3 id="myModalLabel">
             <span class="text-error" style="float: left;">
-               <%= mock.updatedByZh %>(<%= mock.updatedBy %>)(<%= locals.moment(mock.updatedAt).format('YYYY-MM-DD HH:mm')%>)
+               <%= locals.moment(mock.updatedAt).format('YYYY-MM-DD HH:mm')%>
                 <span class="label label-important">最新版本</span>
             </span>
             比较
@@ -466,7 +466,7 @@
                         //  需要移除最新版本
                         if (data.length > 1) {
                             for (var i = data.length - 2; i >= 0; i--) {
-                                var tempHtml = '<p><span>' + data[i].updatedByZh + '(' + data[i].updatedBy + ')</span>| <span>' + data[i].createdAt + '  <a href="javascript:;" data-user-name="' + data[i].updatedByZh + '" data-time="' + data[i].createdAt + '" data-user-id="' + data[i].updatedBy + '" data-id="' + data[i]._id + '" class="text-success compare">比较</a></span></p>'
+                                var tempHtml = '<p><span>' + data[i].createdAt + '  <a href="javascript:;" data-user-name="' + data[i].updatedByZh + '" data-time="' + data[i].createdAt + '" data-user-id="' + data[i].updatedBy + '" data-id="' + data[i]._id + '" class="text-success compare">比较</a></span></p>'
                                 html += tempHtml;
                             }
                         }
@@ -485,10 +485,7 @@
         $('#showMockHistory').on('click', '.compare', function () {
             var $this = $(this);
             var id = $this.data('id');
-            var userId = $this.data('userId');
-            var userName = $this.data('userName') || '';
             var time = $this.data('time');
-            var user = userName + '(' + userId + ')';
 
             if (id) {
                 $.get('/mock/history/async/' + id, function (response) {
@@ -502,7 +499,7 @@
                         $('#responseModalDivLeft').html(_syntaxHighlight(_formatJson($('#responseData').val())));
 
                         // 更新右侧的数据
-                        $('#showMockHistoryCompare .current-version').text(user + '(' + time + ')');
+                        $('#showMockHistoryCompare .current-version').text(time);
 
                         _updateRight(data);
 

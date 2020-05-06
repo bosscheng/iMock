@@ -14,9 +14,7 @@ const cors = require('cors');
 const compression = require('compression');
 
 // file system
-const db = require('./modules/models/db');
-const routes = require('./modules/routes/index');
-const resource = require('./modules/routes/resource');
+require('./modules/models/db');
 const docs = require('./modules/routes/docs');
 const mock = require('./modules/routes/mock');
 const config = require('./modules/config/index');
@@ -56,6 +54,7 @@ app.use(cors());
 app.use(compression());
 
 app.locals.moment = require('moment');
+app.locals.port = app.get('port');
 
 //
 app.get('/', mock.index);
@@ -116,16 +115,14 @@ app.get('*', function (req, res) {
         if (_.indexOf(sourceArray, suffix) !== -1) {
             reqUrl = utils.helpReqResourceUrl(reqUrl);
             res.redirect(reqUrl);
-        }
-        else {
+        } else {
             //
             res.status(404).render('404.ejs', {
                 title: '404',
                 user: req.session.user,
             });
         }
-    }
-    else {
+    } else {
         //
         res.status(404).render('404.ejs', {
             title: '404',

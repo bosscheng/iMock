@@ -460,8 +460,7 @@ footer p {
 }
 
 #showMockHistory .modal-body span{
-    display: inline-block;
-    width: 49%;
+    display: block;
     text-align: center;
 }
 

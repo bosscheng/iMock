@@ -76,8 +76,3 @@ ps: 具体函数详情见：http://mockjs.com/examples.html
 都会显示差异性的。
 
 
-## 更新记录
-
-- 2017/7/3 0.0.2
-    1. mock 平台 支持 mock.js。
-
